@@ -6,11 +6,11 @@ import org.springframework.data.domain.Sort;
  * DataBind untuk table grid.
  *
  * @author Ahmad Fajar
- * @since 26/08/2015, modified: 26/08/2015 23:48
+ * @since 26/08/2015, modified: 30/08/2015 01:40
  */
 public abstract class AbstractDataGrid
 {
-    public static final int PAGESIZE = 25;
+    public static final int PAGESIZE = 15;
     protected int numberOfItems;
     protected int page;
     protected String sortDir;

@@ -7,16 +7,19 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
- * JavaPersistent object entity.
+ * Java Persistent object entity.
  *
  * @author Ahmad Fajar
- * @since 26/08/2015, modified: 28/08/2015 00:26
+ * @since 26/08/2015, modified: 29/08/2015 18:58
  */
 @Entity
 @Cacheable
@@ -27,6 +30,7 @@ import java.util.Date;
                 @Index(name = "person_x2", columnList = "dept_id"),
                 @Index(name = "person_x3", columnList = "gender")
         })
+@EntityListeners(AuditingEntityListener.class)
 public class Person
 {
     private Long personId;
@@ -81,6 +85,8 @@ public class Person
         this.address = address;
     }
 
+    @NotNull(message = "{validation.field.notEmpty}")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
     public Date getBirthDate() {
@@ -102,6 +108,7 @@ public class Person
     }
 
     @ManyToOne
+    @NotNull(message = "{validation.field.notEmpty}")
     @JoinColumn(name = "dept_id", referencedColumnName = "dept_id", nullable = false)
     public Department getDepartment() {
         return department;
@@ -136,7 +143,7 @@ public class Person
 
     @Basic
     @Enumerated(EnumType.STRING)
-    @NotEmpty(message = "{validation.field.notEmpty}")
+    @NotNull(message = "{validation.field.notEmpty}")
     @Column(length = 1, nullable = false)
     public Gender getGender() {
         return gender;
@@ -236,12 +243,12 @@ public class Person
 
     @Override
     public int hashCode() {
-        int result = personId.hashCode();
-        result = 31 * result + department.hashCode();
-        result = 31 * result + fullname.hashCode();
-        result = 31 * result + address.hashCode();
-        result = 31 * result + province.hashCode();
-        result = 31 * result + gender.hashCode();
+        int result = (personId != null ? personId.hashCode() : 0);
+        result = 31 * result + (department != null ? department.hashCode() : 0);
+        result = 31 * result + (fullname != null ? fullname.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (province != null ? province.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (homePhone != null ? homePhone.hashCode() : 0);
         result = 31 * result + (workPhone != null ? workPhone.hashCode() : 0);

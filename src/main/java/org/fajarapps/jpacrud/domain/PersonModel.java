@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Domain model untuk memproses table Person.
  *
  * @author Ahmad Fajar
- * @since 26/08/2015, modified: 28/08/2015 20:43
+ * @since 26/08/2015, modified: 29/08/2015 19:16
  */
 @Repository
 @Transactional(readOnly = false)
@@ -142,11 +142,17 @@ public class PersonModel
             throw new EntityNotFoundException("entity.person.NotFound");
         }
 
-        repository.save(entity);
+        updateFields(entity, record);
+        repository.save(record);
         logger.info("Updating person: {}", entity);
     }
 
-/*
+    /**
+     * Update persistence entity with transient entity.
+     *
+     * @param source transient entity
+     * @param target persistence entity
+     */
     private void updateFields(Person source, Person target) {
         target.setDepartment(source.getDepartment());
         target.setFullname(source.getFullname());
@@ -160,5 +166,4 @@ public class PersonModel
         target.setWorkPhone(source.getWorkPhone());
         target.setGender(source.getGender());
     }
-*/
 }

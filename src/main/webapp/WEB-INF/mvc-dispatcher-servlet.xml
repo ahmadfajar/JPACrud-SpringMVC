@@ -44,33 +44,6 @@
         </bean>
     </mvc:interceptors>
 
-    <!-- Declare default conversionService and formatter, [optional] -->
-    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="registerDefaultFormatters" value="false"/>
-        <property name="formatters">
-            <set>
-                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory"/>
-                <bean class="org.springframework.format.datetime.standard.Jsr310DateTimeFormatAnnotationFormatterFactory"/>
-            </set>
-        </property>
-        <property name="formatterRegistrars">
-            <set>
-                <bean class="org.springframework.format.datetime.standard.DateTimeFormatterRegistrar">
-                    <property name="dateFormatter">
-                        <bean class="org.springframework.format.datetime.standard.DateTimeFormatterFactoryBean">
-                            <property name="pattern" value="dd-MM-yyyy"/>
-                        </bean>
-                    </property>
-                    <property name="dateTimeFormatter">
-                        <bean class="org.springframework.format.datetime.standard.DateTimeFormatterFactoryBean">
-                            <property name="pattern" value="dd-MM-yyyy HH:mm:ss"/>
-                        </bean>
-                    </property>
-                </bean>
-            </set>
-        </property>
-    </bean>
-
     <!-- Declare Localization resource bundles -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames" value="WEB-INF/i18n/messages"/>
@@ -79,11 +52,22 @@
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
         <property name="cookieName" value="locale"/>
     </bean>
+
+    <!-- Declare locale message validator dan conversion service -->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="registerDefaultFormatters" value="false" />
+        <property name="formatters">
+            <set>
+                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+                <bean class="org.springframework.format.datetime.DateTimeFormatAnnotationFormatterFactory" />
+            </set>
+        </property>
+    </bean>
 
-    <!-- Declare cache manager for SpringMVC, [optional] -->
+    <!-- Declare cache manager for Spring-MVC -->
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="ehcache"/>
     </bean>

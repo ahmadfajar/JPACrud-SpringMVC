@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Domain model untuk memproses table Department.
  *
  * @author Ahmad Fajar
- * @since 26/08/2015, modified: 28/08/2015 00:27
+ * @since 26/08/2015, modified: 29/08/2015 21:13
  */
 @Repository
 @Transactional
@@ -88,7 +88,8 @@ public class DepartmentModel
      */
     @Transactional(readOnly = true)
     public Page<Department> listAll(Pageable pageable) {
-        return repository.findAll(pageable);
+        logger.info("Display list of Department entity.");
+        return repository.listAllWithStats(pageable);
     }
 
     public void update(Department entity) throws EntityNotFoundException {

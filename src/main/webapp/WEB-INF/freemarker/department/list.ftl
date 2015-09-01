@@ -44,11 +44,11 @@
           <th class="htgrid-cell-header text-right">#</th>
           <th class="htgrid-cell-header text-center"><label><input type="checkbox" id="toggle-check"/></label></th>
           <th class="htgrid-cell-header">
-            <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="fullname">
-            <#if dataGrid.sortField == "deptName">${caret}</#if>Nama Departemen
+            <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="deptName">
+            <#if dataGrid.sortField == "deptName">${caret}</#if>Departemen
             </div>
           </th>
-          <th class="htgrid-cell-header hidden-xs">Deskripsi</th>
+          <th class="htgrid-cell-header hidden-xs">Keterangan</th>
           <th class="htgrid-cell-header">
             <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip"
                  rel="COUNT(p.personId)"><#if dataGrid.sortField == "COUNT(p.personId)">${caret}</#if># Employee
@@ -62,16 +62,17 @@
             <#assign startNumber="${(dataGrid.page - 1) * dataGrid.pageSize}"/>
             <#list dataGrid.entries as item>
             <tr>
-                <#assign offset="${startNumber + item_index + 1}">
+                <#assign offset="${(startNumber?number + item_index + 1)}">
               <td class="text-right">${offset}</td>
               <td class="text-center"><label>
                 <input type="checkbox" id="cb${offset}" name="dept" value="${item.deptId}"/></label></td>
               <td>${item.deptName}</td>
               <td class="hidden-xs">${item.description}</td>
-              <td>${item.numberOfPerson}</td>
+              <td>${item.numberOfPerson!}</td>
               <td class="text-center hidden-xs">
-                <a class="btn btn-default" href="<@spring.url "/department/edit/${item.deptId}"/>" role="button">
-                <span class="glyphicon glyphicon-edit"></span></a>
+                <a class="btn btn-xs btn-default" href="<@spring.url "/department/edit/${item.deptId}"/>"
+                   title="Sunting" data-toggle="tooltip" role="button">
+                  <span class="glyphicon glyphicon-edit"></span></a>
               </td>
             </tr>
             </#list>
@@ -81,21 +82,31 @@
     </article>
   <#include "../tablegrid-footer.ftl"/>
   </form>
-  <div class="row">
+  <div class="form-group">
     <div class="pull-right">
-      <a class="btn btn-default" href="<@spring.url "/department/create"/>" role="button">
-        <span class="glyphicon glyphicon-plus"></span>New Department</a>
-      <button type="button" id="delete-department" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span>
-        Delete Department
-      </button>
+      <a class="btn btn-default" href="<@spring.url "/department/create"/>" title="Tambah departemen baru"
+         data-toggle="tooltip" role="button"><span class="glyphicon glyphicon-plus"></span> New Department</a>
+      <button type="button" id="delete-department" class="btn btn-danger" title="Hapus departemen"
+              data-toggle="tooltip"><span class="glyphicon glyphicon-trash"></span> Delete Department</button>
     </div>
   </div>
 </section>
 <#include "../footer.ftl"/>
 <script type="text/javascript">
   $(document).ready(function () {
+    $(".container").tooltip({selector: "[data-toggle=tooltip]", placement: "top", container: "body"});
+    $("#toggle-check").checkAll();
+    $("#tableForm").HTGridAction(${dataGrid.totalPages});
     $("#delete-department").click(function () {
-      $("#tableForm").attr("action", "<@spring.url "/department/delete"/>").submit();
+      var nchk = 0;
+      $(":input[id^=cb]").each(function () {
+        if (this.checked == true) {
+          nchk++;
+        }
+      });
+      if (nchk > 0) {
+        $("#tableForm").attr("action", "<@spring.url "/department/delete"/>").submit();
+      }
     });
   });
 </script>

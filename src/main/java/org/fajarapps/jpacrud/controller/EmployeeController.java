@@ -20,14 +20,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Controller untuk mengelola daftar personil.
  *
  * @author Ahmad Fajar
- * @since 26/08/2015, modified: 28/08/2015 10:53
+ * @since 26/08/2015, modified: 30/08/2015 01:03
  */
 @Controller
 @RequestMapping(value = "/employee")
@@ -74,6 +73,7 @@ public class EmployeeController
     public String createPersonForm(Model model) {
         Person person = new Person();
         model.addAttribute("person", person);
+        model.addAttribute("gender", person);
         model.addAttribute("pageTitle", "New Employee - JPA-Crud Project");
 
         return "employee/form";
@@ -101,7 +101,7 @@ public class EmployeeController
                 new PageRequest(0, dataGrid.getPageSize(), Sort.Direction.ASC, "fullname"));
         dataGrid.setPageable(result).setSortDir("asc").setSortField("fullname");
 
-        model.addAttribute("employeeGrid", dataGrid);
+        model.addAttribute("dataGrid", dataGrid);
         model.addAttribute("pages", result);
         model.addAttribute("pageTitle", "Employee - JPA-Crud Project");
 
@@ -117,7 +117,7 @@ public class EmployeeController
         Page<Person> result = personModel.findAllByCriteria(employeeGrid.getDepartmentId(), employeeGrid.getTerm(),
                                                             paging);
         employeeGrid.setPageable(result);
-        model.addAttribute("employeeGrid", employeeGrid);
+        model.addAttribute("dataGrid", employeeGrid);
         model.addAttribute("pages", result);
         model.addAttribute("pageTitle", "Employee - JPA-Crud Project");
 
@@ -125,11 +125,11 @@ public class EmployeeController
     }
 
     @ModelAttribute(value = "departments")
-    public Iterable<Department> listDepartment() {
+    public Iterable<Department> listDepartments() {
         return departmentRepository.findAll(new Sort(Sort.Direction.ASC, "deptName"));
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String updatePerson(@ModelAttribute("person") @Valid Person person, BindingResult result, Model model,
                                RedirectAttributes redirectAttributes, Locale locale) {
         model.addAttribute("pageTitle", "Edit Employee - JPA-Crud Project");

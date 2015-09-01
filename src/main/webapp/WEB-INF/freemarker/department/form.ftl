@@ -30,21 +30,47 @@
 
 <section class="container">
   <div class="page-header">
-    <h1>Daftar Departemen</h1>
+    <h1><#if (department.deptId)??>Sunting<#else>Tambah</#if> Departemen</h1>
   </div>
 <#include "../messages.ftl"/>
-  <form method="post" action="<@spring.url "/department/create"/>" id="tableForm" class="form-horizontal">
-
-  </form>
-  <div class="row">
-    <div class="pull-right">
-      <button type="button" id="delete-department" class="btn btn-danger"><span
-              class="glyphicon glyphicon-trash"></span>
-        Delete Department
-      </button>
+  <form method="post" action="<#if (department.deptId)??><@spring.url "/department/edit"/>
+  <#else><@spring.url "/department/create"/></#if>" id="deptForm" class="form-horizontal">
+    <div class="form-group">
+    <@spring.bind "department.deptName"/>
+      <label for="${spring.status.expression}" class="control-label field-primary col-sm-3 col-md-2">Departemen</label>
+      <div class="col-sm-9 col-md-7">
+      <@spring.formInput "department.deptName", "class=\"form-control required\" minlength=\"3\""/>
+      <#list spring.status.errorMessages as error><label class="error">${error}</label></#list>
+      </div>
     </div>
-  </div>
+    <div class="form-group">
+    <@spring.bind "department.description"/>
+      <label for="${spring.status.expression}" class="control-label col-sm-3 col-md-2">Keterangan</label>
+      <div class="col-sm-9 col-md-10">
+      <@spring.formInput "department.description", "class=\"form-control\""/>
+      <#list spring.status.errorMessages as error><label class="error">${error}</label></#list>
+      </div>
+    </div>
+    <@spring.formHiddenInput "department.deptId"/>
+    <div class="form-group">
+      <label class="control-label col-sm-3 col-md-2"></label>
+      <div class="col-sm-9 col-md-10">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a class="btn btn-default" href="<@spring.url "/department"/>" role="button">Batal</a>
+      </div>
+    </div>
+  </form>
 </section>
 <#include "../footer.ftl"/>
+<script type="text/javascript">
+  $(document).ready(function () {
+    var frm = $("#deptForm");
+    $(".container").tooltip({selector: "[data-toggle=tooltip]", placement: "top", container: "body"});
+    frm.validate({
+      ignore: ""
+    });
+    frm.find(":input").first().focus();
+  });
+</script>
 </body>
 </html>

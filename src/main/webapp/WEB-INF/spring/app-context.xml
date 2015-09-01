@@ -11,7 +11,7 @@
 
     <description>DataSource, JPA, and Hibernate configuration</description>
 
-    <!-- Declare datasource and HikariCP connection pool -->
+    <!-- Declare database connection pool dan JPA DataSource -->
     <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
         <property name="minimumIdle" value="4"/>
         <property name="maximumPoolSize" value="50"/>
@@ -24,9 +24,9 @@
         <property name="dataSourceProperties">
             <props>
                 <prop key="port">3306</prop>
-                <prop key="serverName">homeserver</prop>
-                <prop key="user">fajar</prop>
-                <prop key="password">Janeeta20110908</prop>
+                <prop key="serverName">localhost</prop>
+                <prop key="user">DBUSER</prop>
+                <prop key="password">DBPASSWORD</prop>
                 <prop key="databaseName">db_jpacrud</prop>
                 <prop key="prepStmtCacheSize">250</prop>
                 <prop key="cachePrepStmts">true</prop>
@@ -39,7 +39,7 @@
     </bean>
 
     <!-- Declare SpringData-JPA configuration -->
-    <context:load-time-weaver/>
+    <!-- <context:load-time-weaver/> [ optional, please google utk informasi detailnya ] -->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="jdbcDataSource"/>
         <property name="packagesToScan" value="org.fajarapps.jpacrud.entity"/>
@@ -74,11 +74,13 @@
         </property>
     </bean>
 
+    <!-- Declare JPA Entity message localization -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames" value="WEB-INF/i18n/messages"/>
         <property name="fallbackToSystemLocale" value="false"/>
     </bean>
 
+    <!-- Declare others -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
     <jpa:repositories base-package="org.fajarapps.jpacrud.repository" transaction-manager-ref="transactionManager" />
     <jpa:auditing modify-on-creation="false" />

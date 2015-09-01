@@ -25,7 +25,7 @@ import java.util.Locale;
  * Controller untuk mengelola data Department.
  *
  * @author Ahmad Fajar
- * @since 27/08/2015, modified: 28/08/2015 10:55
+ * @since 27/08/2015, modified: 30/08/2015 01:27
  */
 @Controller
 @RequestMapping(value = "/department")
@@ -70,7 +70,7 @@ public class DepartmentController
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String createDepartmentForm(Model model) {
         Department entity = new Department();
-        model.addAttribute("departement", entity);
+        model.addAttribute("department", entity);
         model.addAttribute("pageTitle", "New Department - JPA-Crud Project");
 
         return "department/form";
@@ -107,19 +107,20 @@ public class DepartmentController
 
     @RequestMapping(method = RequestMethod.POST)
     public String displayAllBinding(DepartmentDataGrid dataGrid, Model model) {
-        int page = dataGrid.getPage();
+        int page = dataGrid.getPage() - 1;
         int pageSize = dataGrid.getPageSize();
         Page<Department> result = departmentModel.listAll(
                 new PageRequest(page, pageSize, dataGrid.getSortSpec("deptName")));
         dataGrid.setPageable(result);
         model.addAttribute("dataGrid", dataGrid);
+        model.addAttribute("pages", result);
         model.addAttribute("pageTitle", "Department - JPA-Crud Project");
 
         return "department/list";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
-    public String updateDepartment(@PathVariable("id") @Valid Department department, BindingResult result, Model model,
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String updateDepartment(@ModelAttribute("department") @Valid Department department, BindingResult result, Model model,
                                    RedirectAttributes redirectAttributes, Locale locale) {
         model.addAttribute("pageTitle", "Edit Department - JPA-Crud Project");
 

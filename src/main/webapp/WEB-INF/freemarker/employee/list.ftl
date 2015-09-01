@@ -29,7 +29,7 @@
 </nav>
 
 <#assign caret>
-<span class="pull-right glyphicon glyphicon-triangle-<#if employeeGrid.sortDir == "asc">top<#else>bottom</#if>"></span>
+<span class="pull-right glyphicon glyphicon-triangle-<#if dataGrid.sortDir == "asc">top<#else>bottom</#if>"></span>
 </#assign>
 <section class="container">
   <div class="page-header">
@@ -37,13 +37,14 @@
   </div>
 <#include "../messages.ftl"/>
   <form method="post" action="<@spring.url "/employee"/>" id="tableForm" class="form-horizontal">
-    <div class="clearfix">
+    <div class="clearfix" style="margin-bottom: 20px">
       <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2 pull-right">
         <div class="row">
-          <select id="departments" name="departments">
-            <option value="">-- Pilih Departemen --</option>
+          <select id="departments" name="departmentId" class="chosen-select" data-placeholder="-- Pilih Departemen --">
+            <option value=""></option>
           <#list departments as dept>
-            <option value="${dept.deptId}">${dept.deptName}</option>
+            <option value="${dept.deptId}"
+                    <#if (dataGrid.departmentId)?? && dataGrid.departmentId == dept.deptId>selected</#if>>${dept.deptName}</option>
           </#list>
           </select>
         </div>
@@ -51,7 +52,7 @@
       <div class="col-xs-6 col-sm-4">
         <div class="row">
           <div class="input-group input-group">
-          <@spring.formInput "employeeGrid.term", "class=\"form-control\" data-toggle=\"tooltip\" placeholder=\"Ketik nama employee\""/>
+          <@spring.formInput "dataGrid.term", "class=\"form-control\" data-toggle=\"tooltip\" placeholder=\"Ketik nama employee\""/>
             <span class="input-group-btn">
                   <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>
                   </button>
@@ -65,63 +66,63 @@
         <thead>
         <tr>
           <th class="htgrid-cell-header text-right">#</th>
-          <th class="htgrid-cell-header text-center"><label><input type="checkbox" id="toggle-check"/></label>
-          </th>
+          <th class="htgrid-cell-header text-center"><label><input type="checkbox" id="toggle-check"/></label></th>
           <th class="htgrid-cell-header">
-            <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="fullname">
-            <#if employeeGrid.sortField == "fullname">${caret}</#if>Nama Lengkap
+            <div class="cell-header-inner text-nowrap" title="Klik untuk mengurutkan" data-toggle="tooltip"
+                 rel="fullname">
+            <#if dataGrid.sortField == "fullname">${caret}</#if>Nama Lengkap
             </div>
           </th>
           <th class="htgrid-cell-header">
             <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip"
-                 rel="department.deptName"><#if employeeGrid.sortField == "department.deptName">${caret}</#if>Departemen
+                 rel="department.deptName"><#if dataGrid.sortField == "department.deptName">${caret}</#if>Departemen
             </div>
           </th>
-          <th class="htgrid-cell-header hidden-xs">
-            <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="email">
-            <#if employeeGrid.sortField == "email">${caret}</#if>Email
-            </div>
-          </th>
-          <th class="htgrid-cell-header hidden-xs hidden-sm">Alamat</th>
+          <th class="htgrid-cell-header hidden-xs hidden-sm hidden-md">Alamat</th>
           <th class="htgrid-cell-header">
             <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="province">
-            <#if employeeGrid.sortField == "province">${caret}</#if>Propinsi
+            <#if dataGrid.sortField == "province">${caret}</#if>Propinsi
             </div>
           </th>
           <th class="htgrid-cell-header hidden-xs">
             <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="birthPlace">
-            <#if employeeGrid.sortField == "birthPlace">${caret}</#if>Tempat Lahir
+            <#if dataGrid.sortField == "birthPlace">${caret}</#if>Tempat Lahir
             </div>
           </th>
-          <th class="htgrid-cell-header text-center hidden-xs hidden-sm">
+          <th class="htgrid-cell-header hidden-xs hidden-sm">
             <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="birthDate">
-            <#if employeeGrid.sortField == "birthDate">${caret}</#if>Tgl. Lahir
+            <#if dataGrid.sortField == "birthDate">${caret}</#if>Tgl. Lahir
             </div>
           </th>
-          <th class="htgrid-cell-header text-center hidden-xs hidden-sm">
+          <th class="htgrid-cell-header hidden-xs hidden-sm">
             <div class="cell-header-inner" title="Klik untuk mengurutkan" data-toggle="tooltip" rel="tsCreated">
-            <#if employeeGrid.sortField == "tsCreated">${caret}</#if>Tgl. Terdaftar
+            <#if dataGrid.sortField == "tsCreated">${caret}</#if>Tgl. Terdaftar
             </div>
           </th>
+          <th class="htgrid-cell-header hidden-xs hidden-sm">Action</th>
         </tr>
         </thead>
         <tbody>
         <#escape x as x?html>
-            <#assign startNumber="${(employeeGrid.page - 1) * employeeGrid.pageSize}"/>
-            <#list employeeGrid.entries as person>
+            <#assign startNumber="${(dataGrid.page - 1) * dataGrid.pageSize}"/>
+            <#list dataGrid.entries as person>
             <tr>
-                <#assign offset="${startNumber + person_index + 1}">
+                <#assign offset="${startNumber?number + person_index + 1}">
               <td class="text-right">${offset}</td>
               <td class="text-center"><label>
                 <input type="checkbox" id="cb${offset}" name="pid" value="${person.personId}"/></label></td>
-              <td>${person.fullname}</td>
+              <td class="text-nowrap">${person.fullname}</td>
               <td>${person.department.deptName}</td>
-              <td class="hidden-xs">${person.email}</td>
-              <td class="hidden-xs hidden-sm">${person.address}</td>
-              <td>${person.province}</td>
-              <td class="hidden-xs">${person.birthPlace}</td>
-              <td class="text-center hidden-xs hidden-sm">${person.birthDate}</td>
-              <td class="text-center">${person.tsCreated}</td>
+              <td class="hidden-xs hidden-sm hidden-md">${person.address!}</td>
+              <td>${person.province!}</td>
+              <td class="hidden-xs">${person.birthPlace!}</td>
+              <td class="hidden-xs hidden-sm">${person.birthDate?string("dd-MM-yyyy")}</td>
+              <td class="text-nowrap">${person.tsCreated?string("dd-MM-yyyy HH:mm:ss")}</td>
+              <td class="text-center hidden-xs hidden-sm">
+                <a class="btn btn-xs btn-default" href="<@spring.url "/employee/edit/${person.personId}"/>"
+                   title="Sunting" data-toggle="tooltip" role="button">
+                  <span class="glyphicon glyphicon-edit"></span></a>
+              </td>
             </tr>
             </#list>
         </#escape>
@@ -130,10 +131,10 @@
     </article>
   <#include "../tablegrid-footer.ftl"/>
   </form>
-  <div class="row">
+  <div class="form-group">
     <div class="pull-right">
       <a class="btn btn-default" href="<@spring.url "/employee/create"/>" role="button">
-        <span class="glyphicon glyphicon-plus"></span>New Employee</a>
+        <span class="glyphicon glyphicon-plus"></span> New Employee</a>
       <button type="button" id="delete-employee" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span>
         Delete Employee
       </button>
@@ -143,8 +144,20 @@
 <#include "../footer.ftl"/>
 <script type="text/javascript">
   $(document).ready(function () {
+    $(".container").tooltip({selector: "[data-toggle=tooltip]", placement: "top", container: "body"});
+    $("#toggle-check").checkAll();
+    $(".chosen-select").chosen({ allow_single_deselect: true });
+    $("#tableForm").HTGridAction(${dataGrid.totalPages});
     $("#delete-employee").click(function () {
-      $("#tableForm").attr("action", "<@spring.url "/employee/delete"/>").submit();
+      var nchk = 0;
+      $(":input[id^=cb]").each(function () {
+        if (this.checked == true) {
+          nchk++;
+        }
+      });
+      if (nchk > 0) {
+        $("#tableForm").attr("action", "<@spring.url "/employee/delete"/>").submit();
+      }
     });
   });
 </script>
